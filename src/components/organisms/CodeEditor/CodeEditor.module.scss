@@ -1,0 +1,147 @@
+@use 'sass:color';
+@use '@/styles/abstracts/variables' as vars;
+@use '@/styles/abstracts/mixins' as mixins;
+
+.codeEditor {
+  @include mixins.flex(column);
+  height: 100%;
+  background-color: vars.$color-surface;
+  border-radius: vars.$radius-lg;
+  overflow: hidden;
+  box-shadow: vars.$shadow-sm;
+
+  &__tabs {
+    @include mixins.flex(row);
+    min-height: 40px;
+    background-color: color.scale(vars.$color-surface, $lightness: -3%);
+    border-bottom: 1px solid vars.$color-border;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 vars.$spacing-2;
+    gap: vars.$spacing-2;
+
+    // Custom scrollbar for tabs
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: color.scale(vars.$color-text-secondary, $alpha: -70%);
+      border-radius: 2px;
+    }
+  }
+
+  &__tab {
+    @include mixins.flex(row);
+    align-items: center;
+    padding: vars.$spacing-2 vars.$spacing-3;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: vars.$radius-sm vars.$radius-sm 0 0;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    transition: all vars.$transition-base;
+    gap: vars.$spacing-2;
+    color: vars.$color-text-secondary;
+    font-size: vars.$font-size-sm;
+
+    &:hover {
+      background-color: color.scale(vars.$color-surface, $lightness: -5%);
+      color: vars.$color-text-primary;
+    }
+
+    &--active {
+      background-color: vars.$color-surface;
+      border-color: vars.$color-border;
+      border-bottom-color: vars.$color-surface;
+      color: vars.$color-text-primary;
+      position: relative;
+
+      // Hide bottom border
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-color: vars.$color-surface;
+      }
+    }
+  }
+
+  &__tabName {
+    @include mixins.flex(row);
+    align-items: center;
+    gap: vars.$spacing-2;
+  }
+
+  &__dirty {
+    color: vars.$color-accent;
+    font-size: 1.2em;
+    line-height: 1;
+  }
+
+  &__tabClose {
+    @include mixins.button-base;
+    background: none;
+    border: none;
+    padding: 0;
+    @include mixins.flex-center;
+    width: 20px;
+    height: 20px;
+    border-radius: vars.$radius-sm;
+    color: vars.$color-text-secondary;
+    font-size: 18px;
+    line-height: 1;
+    transition: all vars.$transition-base;
+    margin-left: vars.$spacing-2;
+
+    &:hover {
+      background-color: color.scale(vars.$color-error, $alpha: -80%);
+      color: vars.$color-error;
+    }
+  }
+
+  &__content {
+    flex: 1;
+    position: relative;
+    min-height: 0;
+  }
+
+  &__loading {
+    @include mixins.flex-center;
+    position: absolute;
+    inset: 0;
+    background-color: vars.$color-surface;
+    color: vars.$color-text-secondary;
+    font-size: vars.$font-size-sm;
+  }
+
+  &__empty {
+    @include mixins.flex-center;
+    @include mixins.flex(column);
+    height: 100%;
+    padding: vars.$spacing-8;
+    text-align: center;
+    color: vars.$color-text-secondary;
+
+    h3 {
+      margin: 0 0 vars.$spacing-3;
+      color: vars.$color-text-primary;
+      font-size: vars.$font-size-lg;
+      font-weight: vars.$font-weight-medium;
+    }
+
+    p {
+      margin: 0;
+      font-size: vars.$font-size-sm;
+    }
+  }
+}
+

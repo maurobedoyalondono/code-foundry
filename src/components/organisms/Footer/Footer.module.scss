@@ -1,0 +1,92 @@
+@use '@/styles/abstracts/variables' as *;
+@use '@/styles/abstracts/mixins' as *;
+@use '@/styles/abstracts/functions' as *;
+
+.footer {
+  height: $footer-height;
+  background-color: $color-primary;
+  color: white;
+  font-size: $font-size-sm;
+  user-select: none;
+
+  &__content {
+    height: 100%;
+    padding: 0 $spacing-4;
+    @include flex(row, space-between, center);
+  }
+
+  &__left,
+  &__right {
+    @include flex(row, flex-start, center);
+    gap: $spacing-4;
+  }
+
+  &__center {
+    @include flex(row, center, center);
+  }
+
+  &__statusItem {
+    @include flex(row, center, center);
+    gap: $spacing-2;
+    padding: 0 $spacing-2;
+    height: 28px;
+    border-radius: $radius-sm;
+    transition: background-color $transition-fast;
+
+    &:hover {
+      background-color: rgba(white, 0.1);
+    }
+  }
+
+  &__statusIndicator {
+    @include status-indicator($color-success);
+
+    &--connected {
+      background-color: $color-success;
+      @extend .pulse;
+    }
+
+    &--disconnected {
+      background-color: $color-idle;
+    }
+
+    &--error {
+      background-color: $color-error;
+      @extend .pulse;
+    }
+  }
+
+  &__statusText {
+    font-weight: $font-weight-medium;
+  }
+
+  &__version {
+    opacity: 0.8;
+    font-weight: $font-weight-medium;
+  }
+
+  &__clock {
+    font-family: $font-family-mono;
+    font-size: $font-size-xs;
+  }
+}
+
+// Pulse animation for status indicators
+.pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

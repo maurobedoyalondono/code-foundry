@@ -1,0 +1,258 @@
+// ============================================================================
+// Industrial Automation IDE - Typography
+// Base typography styles
+// ============================================================================
+
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+@use '../abstracts/functions' as *;
+
+// Base html font size
+html {
+  font-size: 16px; // Base for rem calculations
+}
+
+// Body typography
+body {
+  font-family: $font-family-primary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-normal;
+  color: $color-text-primary;
+  background-color: $color-background;
+}
+
+// Headings
+h1, .h1 {
+  @include heading-1;
+  margin-bottom: $spacing-6;
+  color: $color-text-primary;
+}
+
+h2, .h2 {
+  @include heading-2;
+  margin-bottom: $spacing-5;
+  color: $color-text-primary;
+}
+
+h3, .h3 {
+  @include heading-3;
+  margin-bottom: $spacing-4;
+  color: $color-text-primary;
+}
+
+h4, .h4 {
+  @include heading-4;
+  margin-bottom: $spacing-3;
+  color: $color-text-primary;
+}
+
+h5, .h5 {
+  @include text-style($font-size-lg, $font-weight-medium, $line-height-snug);
+  margin-bottom: $spacing-2;
+  color: $color-text-primary;
+}
+
+h6, .h6 {
+  @include text-style($font-size-base, $font-weight-medium, $line-height-normal);
+  margin-bottom: $spacing-2;
+  color: $color-text-primary;
+}
+
+// Paragraphs
+p {
+  @include body-text;
+  margin-bottom: $spacing-4;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Links
+a {
+  color: $color-primary;
+  text-decoration: none;
+  transition: color $transition-fast;
+  
+  &:hover {
+    color: $color-primary-dark;
+    text-decoration: underline;
+  }
+  
+  &:focus-visible {
+    @include focus-ring;
+    border-radius: $radius-sm;
+  }
+}
+
+// Lists
+ul, ol {
+  margin-bottom: $spacing-4;
+  padding-left: $spacing-5;
+  
+  li {
+    margin-bottom: $spacing-1;
+  }
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+ul {
+  list-style-type: disc;
+}
+
+ol {
+  list-style-type: decimal;
+}
+
+// Code and pre
+code, kbd, samp, pre {
+  @include monospace;
+}
+
+code {
+  padding: px-to-rem(2) px-to-rem(4);
+  background-color: $color-background-secondary;
+  border-radius: $radius-sm;
+  color: $color-text-secondary;
+}
+
+pre {
+  display: block;
+  padding: $spacing-4;
+  margin-bottom: $spacing-4;
+  background-color: $color-editor-bg;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  overflow-x: auto;
+  @include custom-scrollbar;
+  
+  code {
+    padding: 0;
+    background-color: transparent;
+    border-radius: 0;
+    color: inherit;
+  }
+}
+
+// Blockquote
+blockquote {
+  margin: 0 0 $spacing-4;
+  padding: $spacing-3 $spacing-4;
+  border-left: 4px solid $color-primary;
+  background-color: $color-primary-bg;
+  
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Small text
+small, .small {
+  @include small-text;
+}
+
+// Strong and emphasis
+strong, b {
+  font-weight: $font-weight-semibold;
+}
+
+em, i {
+  font-style: italic;
+}
+
+// Mark
+mark {
+  padding: px-to-rem(2) px-to-rem(4);
+  background-color: rgba($color-accent, 0.2);
+  color: $color-text-primary;
+}
+
+// Abbreviation
+abbr[title] {
+  text-decoration: underline dotted;
+  cursor: help;
+}
+
+// Horizontal rule
+hr {
+  height: 0;
+  margin: $spacing-8 0;
+  border: 0;
+  border-top: 1px solid $color-border;
+}
+
+// Text utilities
+.text-xs { font-size: $font-size-xs; }
+.text-sm { font-size: $font-size-sm; }
+.text-base { font-size: $font-size-base; }
+.text-lg { font-size: $font-size-lg; }
+.text-xl { font-size: $font-size-xl; }
+.text-2xl { font-size: $font-size-2xl; }
+.text-3xl { font-size: $font-size-3xl; }
+.text-4xl { font-size: $font-size-4xl; }
+.text-5xl { font-size: $font-size-5xl; }
+
+// Font weight utilities
+.font-light { font-weight: $font-weight-light; }
+.font-regular { font-weight: $font-weight-regular; }
+.font-medium { font-weight: $font-weight-medium; }
+.font-semibold { font-weight: $font-weight-semibold; }
+.font-bold { font-weight: $font-weight-bold; }
+
+// Text alignment
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-justify { text-align: justify; }
+
+// Text transform
+.uppercase { text-transform: uppercase; }
+.lowercase { text-transform: lowercase; }
+.capitalize { text-transform: capitalize; }
+
+// Text color utilities
+.text-primary { color: $color-text-primary; }
+.text-secondary { color: $color-text-secondary; }
+.text-tertiary { color: $color-text-tertiary; }
+.text-light { color: $color-text-light; }
+.text-success { color: $color-success; }
+.text-warning { color: $color-warning; }
+.text-error { color: $color-error; }
+.text-info { color: $color-info; }
+
+// Line height utilities
+.leading-none { line-height: $line-height-none; }
+.leading-tight { line-height: $line-height-tight; }
+.leading-snug { line-height: $line-height-snug; }
+.leading-normal { line-height: $line-height-normal; }
+.leading-relaxed { line-height: $line-height-relaxed; }
+.leading-loose { line-height: $line-height-loose; }
+
+// Truncate utilities
+.truncate {
+  @include truncate;
+}
+
+.line-clamp-2 {
+  @include line-clamp(2);
+}
+
+.line-clamp-3 {
+  @include line-clamp(3);
+}
+
+// Font family utilities
+.font-mono {
+  font-family: $font-family-mono;
+}
+
+// Industrial specific text styles
+.text-running { color: $color-running; }
+.text-stopped { color: $color-stopped; }
+.text-idle { color: $color-idle; }
+.text-safety { color: $color-safety; }
+.text-motion { color: $color-motion; }

@@ -1,0 +1,89 @@
+@use '@/styles/abstracts/variables' as *;
+@use '@/styles/abstracts/mixins' as *;
+@use '@/styles/abstracts/functions' as *;
+
+.treeNode {
+  width: 100%;
+
+  &__content {
+    @include flex(row, flex-start, center);
+    position: relative;
+    height: 28px;
+    padding-right: $spacing-2;
+    cursor: pointer;
+    transition: background-color $transition-fast;
+
+    &:hover {
+      background-color: $color-background-secondary;
+    }
+
+    &--active {
+      background-color: $color-primary-bg;
+      color: $color-primary;
+
+      &:hover {
+        background-color: tint($color-primary-bg, 30%);
+      }
+    }
+  }
+
+  &__toggle {
+    @include flex-center;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $color-text-tertiary;
+    transition: transform $transition-fast;
+
+    &--expanded {
+      transform: rotate(90deg);
+    }
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    &:hover {
+      color: $color-text-secondary;
+    }
+  }
+
+  &__spacer {
+    width: 20px;
+    flex-shrink: 0;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    margin-right: $spacing-2;
+    font-size: $font-size-sm;
+  }
+
+  &__name {
+    flex: 1;
+    font-size: $font-size-sm;
+    @include truncate;
+  }
+
+  &__badge {
+    flex-shrink: 0;
+    padding: 0 $spacing-2;
+    margin-left: $spacing-2;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: $color-text-tertiary;
+    background-color: $color-background-secondary;
+    border-radius: $radius-sm;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wide;
+  }
+
+  &__children {
+    width: 100%;
+  }
+}

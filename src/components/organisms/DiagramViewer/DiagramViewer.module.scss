@@ -1,0 +1,122 @@
+@use 'sass:color';
+@use '@/styles/abstracts/variables' as vars;
+@use '@/styles/abstracts/mixins' as mixins;
+
+.diagramViewer {
+  height: 100%;
+  width: 100%;
+  background-color: vars.$color-background;
+  border-radius: vars.$radius-lg;
+  overflow: hidden;
+  position: relative;
+
+  // Override ReactFlow styles for industrial theme
+  :global {
+    .react-flow__renderer {
+      background-color: vars.$color-background;
+    }
+
+    .react-flow__node {
+      font-family: vars.$font-family-mono;
+      font-size: vars.$font-size-sm;
+    }
+
+    .react-flow__edge-path {
+      stroke: vars.$color-border-strong;
+      stroke-width: 2;
+    }
+
+    .react-flow__edge.selected .react-flow__edge-path {
+      stroke: vars.$color-primary;
+    }
+
+    .react-flow__controls {
+      background-color: vars.$color-surface;
+      border: 1px solid vars.$color-border;
+      border-radius: vars.$radius-md;
+      box-shadow: vars.$shadow-sm;
+
+      button {
+        background-color: vars.$color-surface;
+        border-bottom: 1px solid vars.$color-border;
+        color: vars.$color-text-primary;
+
+        &:hover {
+          background-color: vars.$color-background;
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        svg {
+          fill: currentColor;
+        }
+      }
+    }
+
+    .react-flow__minimap {
+      background-color: vars.$color-surface;
+      border: 1px solid vars.$color-border;
+      border-radius: vars.$radius-md;
+      box-shadow: vars.$shadow-sm;
+
+      .react-flow__minimap-mask {
+        fill: vars.$color-surface;
+        fill-opacity: 0.8;
+      }
+    }
+
+    .react-flow__background {
+      background-color: vars.$color-background;
+    }
+
+    .react-flow__attribution {
+      display: none;
+    }
+  }
+}
+
+// Industrial node styling
+.industrialNode {
+  background-color: vars.$color-surface;
+  border: 2px solid vars.$color-border-strong;
+  border-radius: vars.$radius-md;
+  padding: vars.$spacing-3;
+  min-width: 120px;
+  box-shadow: vars.$shadow-sm;
+  transition: all vars.$transition-base;
+
+  &:hover {
+    box-shadow: vars.$shadow-md;
+    border-color: vars.$color-primary;
+  }
+
+  &--selected {
+    border-color: vars.$color-primary;
+    box-shadow: 0 0 0 2px color.scale(vars.$color-primary, $alpha: -80%);
+  }
+
+  &__label {
+    font-weight: vars.$font-weight-semibold;
+    color: vars.$color-text-primary;
+    text-align: center;
+    margin-bottom: vars.$spacing-2;
+  }
+
+  &__ports {
+    @include mixins.flex(row, space-between, flex-start);
+    margin-top: vars.$spacing-2;
+  }
+
+  &__inputs,
+  &__outputs {
+    @include mixins.flex(column);
+    gap: vars.$spacing-1;
+  }
+
+  &__port {
+    font-size: vars.$font-size-xs;
+    color: vars.$color-text-secondary;
+  }
+}

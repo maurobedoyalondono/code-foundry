@@ -1,0 +1,19 @@
+@use '@/styles/abstracts/variables' as *;
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  &--sm {
+    font-size: $font-size-sm;
+  }
+  
+  &--md {
+    font-size: $font-size-base;
+  }
+  
+  &--lg {
+    font-size: $font-size-xl;
+  }
+}

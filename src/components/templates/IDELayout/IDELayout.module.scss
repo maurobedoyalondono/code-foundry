@@ -1,0 +1,213 @@
+@use '@/styles/abstracts/variables' as *;
+@use '@/styles/abstracts/mixins' as *;
+@use '@/styles/abstracts/functions' as *;
+
+.ideLayout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background-color: $color-background;
+
+  &__header {
+    flex-shrink: 0;
+    height: $header-height;
+    background-color: $color-surface;
+    border-bottom: 1px solid $color-border;
+    box-shadow: $shadow-sm;
+    z-index: z-index('sticky');
+  }
+
+  &__headerContent {
+    height: 100%;
+    padding: 0 $spacing-4;
+    @include flex(row, space-between, center);
+  }
+
+  &__logo {
+    h1 {
+      margin: 0;
+      font-size: $font-size-xl;
+      font-weight: $font-weight-semibold;
+      color: $color-primary;
+      letter-spacing: $letter-spacing-tight;
+    }
+  }
+
+  &__nav {
+    @include flex(row, center, center);
+    gap: $spacing-4;
+  }
+
+  &__actions {
+    @include flex(row, flex-end, center);
+    gap: $spacing-3;
+  }
+
+  &__body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  &__sidebar {
+    flex-shrink: 0;
+    width: $sidebar-width;
+    background-color: $color-surface;
+    border-right: 1px solid $color-border;
+    overflow: hidden;
+    transition: width $transition-base;
+    display: flex;
+    flex-direction: column;
+
+    &--collapsed {
+      width: 48px;
+    }
+  }
+
+  &__sidebarHeader {
+    flex-shrink: 0;
+    height: 40px;
+    padding: $spacing-2;
+    border-bottom: 1px solid $color-border;
+    @include flex(row, flex-end, center);
+  }
+
+  &__sidebarContent {
+    flex: 1;
+    overflow-y: auto;
+    @include custom-scrollbar;
+  }
+
+  &__main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: $color-background;
+  }
+
+  &__editorArea {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    background-color: $color-surface;
+  }
+
+  &__terminal {
+    flex-shrink: 0;
+    height: $terminal-min-height;
+    background-color: $color-surface;
+    border-top: 1px solid $color-border;
+    overflow: hidden;
+    transition: height $transition-base;
+    display: flex;
+    flex-direction: column;
+
+    &--expanded {
+      height: 50%;
+    }
+
+    &--collapsed {
+      height: 40px;
+    }
+  }
+
+  &__terminalHeader {
+    flex-shrink: 0;
+    height: 40px;
+    padding: 0 $spacing-3;
+    background-color: $color-background-secondary;
+    border-bottom: 1px solid $color-border;
+    @include flex(row, space-between, center);
+  }
+
+  &__terminalTabs {
+    @include flex(row, flex-start, center);
+    gap: $spacing-2;
+  }
+
+  &__terminalTab {
+    padding: $spacing-1 $spacing-3;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+    background-color: $color-surface;
+    border-radius: $radius-md $radius-md 0 0;
+    cursor: pointer;
+    transition: $transition-colors $transition-fast;
+
+    &:hover {
+      background-color: $color-primary-bg;
+      color: $color-primary;
+    }
+  }
+
+  &__terminalContent {
+    flex: 1;
+    overflow: hidden;
+  }
+
+  &__collapseBtn {
+    @include button-ghost;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    font-size: $font-size-lg;
+    border-radius: $radius-md;
+  }
+
+  &__footer {
+    flex-shrink: 0;
+    height: $footer-height;
+    background-color: $color-primary;
+    color: white;
+  }
+
+  &__statusBar {
+    height: 100%;
+    padding: 0 $spacing-4;
+    @include flex(row, space-between, center);
+  }
+
+  &__statusItem {
+    @include flex(row, center, center);
+    gap: $spacing-2;
+    font-size: $font-size-sm;
+
+    &--success {
+      color: $color-success;
+    }
+
+    &--warning {
+      color: $color-warning;
+    }
+
+    &--error {
+      color: $color-error;
+    }
+  }
+}
+
+// Responsive styles
+@include respond-to('md') {
+  .ideLayout {
+    &__sidebar {
+      position: fixed;
+      top: $header-height;
+      left: 0;
+      height: calc(100vh - #{$header-height} - #{$footer-height});
+      transform: translateX(-100%);
+      z-index: z-index('fixed');
+      box-shadow: $shadow-lg;
+
+      &--open {
+        transform: translateX(0);
+      }
+    }
+
+    &__main {
+      margin-left: 0;
+    }
+  }
+}

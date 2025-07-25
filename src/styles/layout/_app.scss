@@ -1,0 +1,264 @@
+// ============================================================================
+// Industrial Automation IDE - App Layout
+// Main application layout styles
+// ============================================================================
+
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+@use '../abstracts/functions' as *;
+
+// Root app container
+#__next {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: $color-background;
+}
+
+// IDE Layout
+.ide-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  
+  &__header {
+    flex-shrink: 0;
+    height: $header-height;
+    background-color: $color-surface;
+    border-bottom: 1px solid $color-border;
+    z-index: z-index('sticky');
+  }
+  
+  &__body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  
+  &__sidebar {
+    flex-shrink: 0;
+    width: $sidebar-width;
+    background-color: $color-surface;
+    border-right: 1px solid $color-border;
+    overflow-y: auto;
+    @include custom-scrollbar;
+    
+    &--collapsed {
+      width: 48px;
+    }
+  }
+  
+  &__main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: $color-background;
+  }
+  
+  &__editor-area {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+  
+  &__terminal {
+    flex-shrink: 0;
+    height: $terminal-min-height;
+    background-color: $color-surface;
+    border-top: 1px solid $color-border;
+    overflow: hidden;
+    
+    &--expanded {
+      height: 50%;
+    }
+    
+    &--collapsed {
+      height: 40px;
+    }
+  }
+  
+  &__footer {
+    flex-shrink: 0;
+    height: $footer-height;
+    background-color: $color-surface;
+    border-top: 1px solid $color-border;
+  }
+}
+
+// Split pane layout
+.split-pane {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  
+  &--horizontal {
+    flex-direction: row;
+  }
+  
+  &--vertical {
+    flex-direction: column;
+  }
+  
+  &__pane {
+    overflow: hidden;
+    
+    &--primary {
+      flex: 1;
+    }
+    
+    &--secondary {
+      flex-shrink: 0;
+    }
+  }
+  
+  &__divider {
+    flex-shrink: 0;
+    background-color: $color-border;
+    position: relative;
+    user-select: none;
+    
+    &--horizontal {
+      width: 4px;
+      cursor: col-resize;
+      
+      &:hover, &--dragging {
+        background-color: $color-primary;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: -2px;
+          right: -2px;
+        }
+      }
+    }
+    
+    &--vertical {
+      height: 4px;
+      cursor: row-resize;
+      
+      &:hover, &--dragging {
+        background-color: $color-primary;
+        
+        &::after {
+          content: '';
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: -2px;
+          bottom: -2px;
+        }
+      }
+    }
+  }
+}
+
+// Tab container
+.tab-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  
+  &__header {
+    display: flex;
+    flex-shrink: 0;
+    background-color: $color-background-secondary;
+    border-bottom: 1px solid $color-border;
+    overflow-x: auto;
+    @include custom-scrollbar;
+  }
+  
+  &__content {
+    flex: 1;
+    overflow: hidden;
+  }
+}
+
+// Resizable panels
+.resizable-panel {
+  display: flex;
+  
+  &--horizontal {
+    flex-direction: row;
+  }
+  
+  &--vertical {
+    flex-direction: column;
+  }
+  
+  &__content {
+    flex: 1;
+    overflow: hidden;
+  }
+  
+  &__handle {
+    position: relative;
+    background-color: transparent;
+    transition: background-color $transition-fast;
+    
+    &--horizontal {
+      width: 8px;
+      cursor: col-resize;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 3px;
+        width: 2px;
+        background-color: $color-border;
+        transition: background-color $transition-fast;
+      }
+    }
+    
+    &--vertical {
+      height: 8px;
+      cursor: row-resize;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 3px;
+        height: 2px;
+        background-color: $color-border;
+        transition: background-color $transition-fast;
+      }
+    }
+    
+    &:hover {
+      &::before {
+        background-color: $color-primary;
+      }
+    }
+  }
+}
+
+// Mobile responsive
+@include respond-to('md') {
+  .ide-layout {
+    &__sidebar {
+      position: fixed;
+      top: $header-height;
+      left: 0;
+      height: calc(100vh - #{$header-height});
+      transform: translateX(-100%);
+      transition: transform $transition-base;
+      z-index: z-index('fixed');
+      
+      &--open {
+        transform: translateX(0);
+      }
+    }
+    
+    &__main {
+      margin-left: 0;
+    }
+  }
+}

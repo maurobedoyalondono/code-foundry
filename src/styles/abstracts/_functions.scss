@@ -1,0 +1,164 @@
+// ============================================================================
+// Industrial Automation IDE - SCSS Functions
+// Helper functions for calculations and utilities
+// ============================================================================
+
+@use 'sass:math';
+@use 'sass:color';
+@use 'sass:string';
+@use 'sass:meta';
+@use 'variables' as *;
+
+// Convert pixels to rem
+// ============================================================================
+@function px-to-rem($px, $base: 16) {
+  @return math.div($px, $base) * 1rem;
+}
+
+// Convert rem to pixels
+// ============================================================================
+@function rem-to-px($rem, $base: 16) {
+  @return math.div($rem, 1rem) * $base * 1px;
+}
+
+// Calculate line height based on font size
+// ============================================================================
+@function calculate-line-height($font-size, $line-height-ratio: 1.5) {
+  @return $font-size * $line-height-ratio;
+}
+
+// Get z-index value
+// ============================================================================
+@function z-index($layer) {
+  @if $layer == 'negative' {
+    @return $z-index-negative;
+  } @else if $layer == 'base' {
+    @return $z-index-base;
+  } @else if $layer == 'dropdown' {
+    @return $z-index-dropdown;
+  } @else if $layer == 'sticky' {
+    @return $z-index-sticky;
+  } @else if $layer == 'fixed' {
+    @return $z-index-fixed;
+  } @else if $layer == 'modal-backdrop' {
+    @return $z-index-modal-backdrop;
+  } @else if $layer == 'modal' {
+    @return $z-index-modal;
+  } @else if $layer == 'popover' {
+    @return $z-index-popover;
+  } @else if $layer == 'tooltip' {
+    @return $z-index-tooltip;
+  } @else if $layer == 'notification' {
+    @return $z-index-notification;
+  } @else if $layer == 'max' {
+    @return $z-index-max;
+  }
+  @return $z-index-base;
+}
+
+// Color manipulation
+// ============================================================================
+// Tint - mix color with white
+@function tint($color, $percentage) {
+  @return color.mix(white, $color, $percentage);
+}
+
+// Shade - mix color with black
+@function shade($color, $percentage) {
+  @return color.mix(black, $color, $percentage);
+}
+
+// Get contrasting text color (black or white) based on background
+@function contrast-color($background) {
+  $r: color.red($background);
+  $g: color.green($background);
+  $b: color.blue($background);
+  $yiq: math.div(($r * 299) + ($g * 587) + ($b * 114), 1000);
+  
+  @if ($yiq >= 150) {
+    @return $color-text-primary;
+  } @else {
+    @return white;
+  }
+}
+
+// Create color variant
+@function color-variant($color, $variant: 'base') {
+  @if $variant == 'light' {
+    @return tint($color, 20%);
+  } @else if $variant == 'lighter' {
+    @return tint($color, 40%);
+  } @else if $variant == 'lightest' {
+    @return tint($color, 60%);
+  } @else if $variant == 'dark' {
+    @return shade($color, 20%);
+  } @else if $variant == 'darker' {
+    @return shade($color, 40%);
+  } @else if $variant == 'darkest' {
+    @return shade($color, 60%);
+  }
+  @return $color;
+}
+
+// Spacing helpers
+// ============================================================================
+@function spacing($multiplier) {
+  @return $spacing-4 * $multiplier;
+}
+
+// Get negative spacing value
+@function negative-spacing($size) {
+  @return -1 * $size;
+}
+
+// Industrial color states
+// ============================================================================
+@function machine-state-color($state) {
+  @if $state == 'running' {
+    @return $color-running;
+  } @else if $state == 'stopped' {
+    @return $color-stopped;
+  } @else if $state == 'idle' {
+    @return $color-idle;
+  } @else if $state == 'warning' {
+    @return $color-warning;
+  } @else if $state == 'error' {
+    @return $color-error;
+  }
+  @return $color-text-tertiary;
+}
+
+// IO type colors
+@function io-color($type) {
+  @if $type == 'input' {
+    @return $color-io-input;
+  } @else if $type == 'output' {
+    @return $color-io-output;
+  }
+  @return $color-text-secondary;
+}
+
+// Calculate responsive value
+// ============================================================================
+@function responsive-value($min-value, $max-value, $min-vw: 320px, $max-vw: 1280px) {
+  $difference: $max-value - $min-value;
+  $vw-difference: $max-vw - $min-vw;
+  @return calc(#{$min-value} + #{strip-unit($difference)} * ((100vw - #{$min-vw}) / #{strip-unit($vw-difference)}));
+}
+
+// Strip unit from value
+@function strip-unit($value) {
+  @return math.div($value, ($value * 0 + 1));
+}
+
+// Create rgba from hex color
+// ============================================================================
+@function rgba-color($color, $alpha) {
+  @return rgba($color, $alpha);
+}
+
+// Generate unique ID for animations
+// ============================================================================
+@function unique-id() {
+  @return string.unique-id();
+}

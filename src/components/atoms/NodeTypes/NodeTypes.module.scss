@@ -1,0 +1,203 @@
+@use 'sass:color';
+@use '@/styles/abstracts/variables' as vars;
+@use '@/styles/abstracts/mixins' as mixins;
+
+// Base node styling
+.nodeBase {
+  background-color: vars.$color-surface;
+  border: 2px solid vars.$color-border-strong;
+  border-radius: vars.$radius-md;
+  box-shadow: vars.$shadow-sm;
+  transition: all vars.$transition-base;
+  font-family: vars.$font-family-mono;
+
+  &--selected {
+    border-color: vars.$color-primary;
+    box-shadow: 0 0 0 2px color.scale(vars.$color-primary, $alpha: -80%);
+  }
+}
+
+// Function Block Node
+.functionBlock {
+  @extend .nodeBase;
+  min-width: 200px;
+  min-height: 100px;
+
+  &__header {
+    @include mixins.flex(row, center, center);
+    gap: vars.$spacing-2;
+    padding: vars.$spacing-2 vars.$spacing-3;
+    background-color: vars.$color-background;
+    border-bottom: 1px solid vars.$color-border;
+    border-radius: vars.$radius-md vars.$radius-md 0 0;
+  }
+
+  &__icon {
+    font-size: vars.$font-size-sm;
+  }
+
+  &__label {
+    font-weight: vars.$font-weight-semibold;
+    color: vars.$color-text-primary;
+    font-size: vars.$font-size-sm;
+  }
+
+  &__body {
+    @include mixins.flex(row, space-between, stretch);
+    padding: vars.$spacing-3;
+    gap: vars.$spacing-4;
+    min-height: 60px;
+  }
+
+  &__inputs,
+  &__outputs {
+    @include mixins.flex(column, center);
+    gap: vars.$spacing-2;
+  }
+
+  &__inputs {
+    align-items: flex-start;
+  }
+
+  &__outputs {
+    align-items: flex-end;
+  }
+
+  &__port {
+    font-size: vars.$font-size-xs;
+    color: vars.$color-text-secondary;
+    position: relative;
+  }
+
+  &__handle {
+    width: 8px !important;
+    height: 8px !important;
+    background-color: vars.$color-primary !important;
+    border: 2px solid vars.$color-surface !important;
+  }
+}
+
+// Contact Node
+.contact {
+  @extend .nodeBase;
+  padding: vars.$spacing-2 vars.$spacing-3;
+  min-width: 120px;
+  text-align: center;
+
+  &--active {
+    background-color: color.scale(vars.$color-success, $alpha: -90%);
+    border-color: vars.$color-success;
+  }
+
+  &__symbol {
+    font-family: vars.$font-family-mono;
+    font-size: vars.$font-size-base;
+    font-weight: vars.$font-weight-bold;
+    color: vars.$color-text-primary;
+    margin-bottom: vars.$spacing-1;
+  }
+
+  &__label {
+    font-size: vars.$font-size-xs;
+    color: vars.$color-text-secondary;
+  }
+
+  &__handle {
+    width: 8px !important;
+    height: 8px !important;
+    background-color: vars.$color-io-input !important;
+    border: 2px solid vars.$color-surface !important;
+  }
+}
+
+// Coil Node
+.coil {
+  @extend .nodeBase;
+  padding: vars.$spacing-2 vars.$spacing-3;
+  min-width: 120px;
+  text-align: center;
+
+  &--active {
+    background-color: color.scale(vars.$color-success, $alpha: -90%);
+    border-color: vars.$color-success;
+  }
+
+  &__symbol {
+    font-family: vars.$font-family-mono;
+    font-size: vars.$font-size-lg;
+    font-weight: vars.$font-weight-bold;
+    color: vars.$color-text-primary;
+    margin-bottom: vars.$spacing-1;
+  }
+
+  &__label {
+    font-size: vars.$font-size-xs;
+    color: vars.$color-text-secondary;
+  }
+
+  &__handle {
+    width: 8px !important;
+    height: 8px !important;
+    background-color: vars.$color-io-output !important;
+    border: 2px solid vars.$color-surface !important;
+  }
+}
+
+// Timer Node
+.timer {
+  @extend .nodeBase;
+  min-width: 180px;
+  padding: 0;
+  overflow: hidden;
+
+  &__header {
+    @include mixins.flex(row, space-between, center);
+    padding: vars.$spacing-2 vars.$spacing-3;
+    background-color: vars.$color-background;
+    border-bottom: 1px solid vars.$color-border;
+  }
+
+  &__type {
+    font-size: vars.$font-size-xs;
+    font-weight: vars.$font-weight-bold;
+    color: vars.$color-accent;
+  }
+
+  &__label {
+    font-size: vars.$font-size-sm;
+    font-weight: vars.$font-weight-medium;
+    color: vars.$color-text-primary;
+  }
+
+  &__values {
+    padding: vars.$spacing-2 vars.$spacing-3;
+    @include mixins.flex(column);
+    gap: vars.$spacing-1;
+  }
+
+  &__preset,
+  &__accumulated {
+    font-size: vars.$font-size-xs;
+    color: vars.$color-text-secondary;
+  }
+
+  &__progress {
+    height: 4px;
+    background-color: vars.$color-background;
+    margin: vars.$spacing-2 0;
+    position: relative;
+  }
+
+  &__progressBar {
+    height: 100%;
+    background-color: vars.$color-accent;
+    transition: width vars.$transition-base;
+  }
+
+  &__handle {
+    width: 8px !important;
+    height: 8px !important;
+    background-color: vars.$color-accent !important;
+    border: 2px solid vars.$color-surface !important;
+  }
+}

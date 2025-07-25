@@ -1,0 +1,167 @@
+// ============================================================================
+// Industrial Automation IDE - CSS Reset
+// Modern CSS reset for consistent cross-browser styling
+// ============================================================================
+
+// Box sizing
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+// Remove default margin
+* {
+  margin: 0;
+}
+
+// Prevent font size inflation
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+// Remove default margin and set core defaults
+body {
+  margin: 0;
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Typography defaults
+h1, h2, h3, h4, h5, h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+// Reset list styles
+ul, ol {
+  list-style: none;
+  padding: 0;
+}
+
+// Balance text wrapping
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+// Make images easier to work with
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+// Inherit fonts for inputs and buttons
+input, button, textarea, select {
+  font: inherit;
+  color: inherit;
+}
+
+// Remove button styling
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: inherit;
+  
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+// Avoid text overflows
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+// Remove link underlines
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+// Remove default table spacing
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+// Reset form elements
+input, textarea, select {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+// Remove spinner buttons from number inputs
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+// Remove search input styling
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+}
+
+// Remove default fieldset styles
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+// Remove default legend styles
+legend {
+  padding: 0;
+}
+
+// Remove default summary marker
+summary {
+  display: block;
+  list-style: none;
+  
+  &::-webkit-details-marker {
+    display: none;
+  }
+}
+
+// Remove outline for mouse users, keep for keyboard
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+// Create stacking context
+#__next {
+  isolation: isolate;
+}
+
+// Smooth scrolling
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  * {
+    border-color: currentColor !important;
+  }
+}

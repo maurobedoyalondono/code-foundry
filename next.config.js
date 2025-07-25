@@ -3,10 +3,6 @@ const nextConfig = {
   sassOptions: {
     silenceDeprecations: ['legacy-js-api'],
   },
-  i18n: {
-    locales: ['en', 'es', 'de'],
-    defaultLocale: 'en',
-  },
   webpack: (config) => {
     // Handle file system operations
     config.resolve.fallback = {

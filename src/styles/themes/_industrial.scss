@@ -1,0 +1,275 @@
+// ============================================================================
+// Industrial Automation IDE - Industrial Theme
+// Light, modern theme for industrial applications
+// ============================================================================
+
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+@use '../abstracts/functions' as *;
+@use 'sass:color';
+
+// Industrial theme specific overrides
+:root {
+  // Colors
+  --color-primary: #{$color-primary};
+  --color-primary-light: #{$color-primary-light};
+  --color-primary-dark: #{$color-primary-dark};
+  --color-accent: #{$color-accent};
+  
+  // Surface colors
+  --color-surface: #{$color-surface};
+  --color-background: #{$color-background};
+  
+  // Text colors
+  --color-text-primary: #{$color-text-primary};
+  --color-text-secondary: #{$color-text-secondary};
+  
+  // Industrial colors
+  --color-running: #{$color-running};
+  --color-stopped: #{$color-stopped};
+  --color-idle: #{$color-idle};
+  --color-safety: #{$color-safety};
+  
+  // Transitions
+  --transition-base: #{$transition-base};
+  --transition-fast: #{$transition-fast};
+}
+
+// Component theme overrides
+.industrial-theme {
+  // Buttons with industrial styling
+  .btn-emergency {
+    @include button-base;
+    background-color: $color-safety;
+    color: white;
+    font-weight: $font-weight-bold;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wide;
+    box-shadow: $shadow-md;
+    
+    &:hover:not(:disabled) {
+      background-color: color.scale($color-safety, $lightness: -10%);
+      box-shadow: $shadow-lg;
+    }
+    
+    &:active:not(:disabled) {
+      box-shadow: $shadow-sm;
+      transform: translateY(1px);
+    }
+  }
+  
+  // Status indicators
+  .status-led {
+    @include led-indicator;
+    
+    &--running {
+      @include led-indicator($color-running);
+    }
+    
+    &--stopped {
+      @include led-indicator($color-stopped);
+    }
+    
+    &--idle {
+      @include led-indicator($color-idle);
+    }
+    
+    &--warning {
+      @include led-indicator($color-warning);
+    }
+  }
+  
+  // Industrial panels
+  .control-panel {
+    @include industrial-panel;
+    padding: $spacing-4;
+    
+    &__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: $spacing-3;
+      padding-bottom: $spacing-3;
+      border-bottom: 1px solid $color-border;
+      
+      h3 {
+        margin: 0;
+        font-size: $font-size-lg;
+        font-weight: $font-weight-semibold;
+        text-transform: uppercase;
+        letter-spacing: $letter-spacing-wide;
+      }
+    }
+    
+    &__body {
+      display: grid;
+      gap: $spacing-3;
+    }
+  }
+  
+  // Gauge display
+  .gauge {
+    @include panel;
+    padding: $spacing-3;
+    text-align: center;
+    
+    &__label {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+      color: $color-text-secondary;
+      text-transform: uppercase;
+      letter-spacing: $letter-spacing-wide;
+      margin-bottom: $spacing-2;
+    }
+    
+    &__value {
+      font-size: $font-size-3xl;
+      font-weight: $font-weight-bold;
+      color: $color-text-primary;
+      font-family: $font-family-mono;
+    }
+    
+    &__unit {
+      font-size: $font-size-lg;
+      color: $color-text-tertiary;
+      margin-left: $spacing-1;
+    }
+  }
+  
+  // Digital display
+  .digital-display {
+    background-color: #1a1a1a;
+    color: #00ff00;
+    font-family: $font-family-mono;
+    padding: $spacing-2 $spacing-3;
+    border-radius: $radius-md;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+    
+    &--amber {
+      color: #ffb000;
+    }
+    
+    &--red {
+      color: #ff0000;
+    }
+  }
+  
+  // Toggle switches
+  .toggle-switch {
+    position: relative;
+    width: 60px;
+    height: 30px;
+    
+    input {
+      @include visually-hidden;
+    }
+    
+    &__slider {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: $color-border-strong;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background-color $transition-base;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        height: 22px;
+        width: 22px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        border-radius: 50%;
+        transition: transform $transition-base;
+        box-shadow: $shadow-sm;
+      }
+    }
+    
+    input:checked + &__slider {
+      background-color: $color-success;
+      
+      &::before {
+        transform: translateX(30px);
+      }
+    }
+    
+    &--danger {
+      input:checked + .toggle-switch__slider {
+        background-color: $color-safety;
+      }
+    }
+  }
+  
+  // Industrial buttons
+  .industrial-button {
+    @include button-base;
+    position: relative;
+    background: linear-gradient(180deg, #f0f0f0 0%, #d0d0d0 100%);
+    border: 2px solid #999;
+    box-shadow: 
+      0 2px 0 rgba(255, 255, 255, 0.5) inset,
+      0 -2px 0 rgba(0, 0, 0, 0.1) inset,
+      0 2px 4px rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
+    font-weight: $font-weight-semibold;
+    letter-spacing: $letter-spacing-wide;
+    
+    &:active:not(:disabled) {
+      background: linear-gradient(180deg, #d0d0d0 0%, #e0e0e0 100%);
+      box-shadow: 
+        0 2px 0 rgba(0, 0, 0, 0.1) inset,
+        0 -2px 0 rgba(255, 255, 255, 0.5) inset,
+        0 1px 2px rgba(0, 0, 0, 0.1);
+      transform: translateY(1px);
+    }
+    
+    &--start {
+      background: linear-gradient(180deg, #4ade80 0%, #22c55e 100%);
+      border-color: #16a34a;
+      color: white;
+    }
+    
+    &--stop {
+      background: linear-gradient(180deg, #f87171 0%, #ef4444 100%);
+      border-color: #dc2626;
+      color: white;
+    }
+  }
+  
+  // Warning stripes
+  .warning-stripes {
+    background-image: repeating-linear-gradient(
+      45deg,
+      $color-warning,
+      $color-warning 10px,
+      #000 10px,
+      #000 20px
+    );
+    height: 8px;
+  }
+  
+  // Safety border
+  .safety-border {
+    border: 4px solid $color-safety;
+    border-radius: $radius-md;
+    padding: $spacing-4;
+    position: relative;
+    
+    &::before {
+      content: 'SAFETY ZONE';
+      position: absolute;
+      top: -12px;
+      left: $spacing-3;
+      background-color: $color-surface;
+      padding: 0 $spacing-2;
+      font-size: $font-size-xs;
+      font-weight: $font-weight-bold;
+      color: $color-safety;
+      letter-spacing: $letter-spacing-wider;
+    }
+  }
+}
