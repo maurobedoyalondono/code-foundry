@@ -5,6 +5,7 @@ import { IDELayout } from '@/components/templates/IDELayout'
 import { ProjectExplorer } from '@/components/organisms/ProjectExplorer'
 import { CodeEditor } from '@/components/organisms/CodeEditor'
 import { DiagramViewer, createDemoDiagram } from '@/components/organisms/DiagramViewer'
+import { AITerminal } from '@/components/organisms/AITerminal'
 import { useSolutionStore, useEditorStore, useAIStore } from '@/store'
 import { FileNode } from '@/types/project.types'
 import { diagramGenerationService } from '@/services/DiagramGenerationService'
@@ -84,17 +85,20 @@ export default function HomePage() {
   }
 
 
-  const AITerminal = () => (
-    <div style={{ 
-      padding: '1rem',
-      height: '100%',
-      backgroundColor: '#1e1e1e',
-      color: '#ffffff'
-    }}>
-      <h3>AI Terminal</h3>
-      <p>Chat interface will be implemented next</p>
-    </div>
-  )
+  const handleCodeInsertFromAI = (code: string) => {
+    // Insert code at cursor position in active editor
+    const activeTab = useEditorStore.getState().openTabs.find(
+      tab => tab.id === useEditorStore.getState().activeTabId
+    )
+    if (activeTab) {
+      // In a real implementation, this would insert at cursor position
+      // For now, append to existing content
+      useEditorStore.getState().updateTabContent(
+        activeTab.id,
+        activeTab.content + '\n\n' + code
+      )
+    }
+  }
 
   return (
     <IDELayout
@@ -163,7 +167,12 @@ export default function HomePage() {
           </div>
         </div>
       }
-      rightPanelLower={<AITerminal />}
+      rightPanelLower={
+        <AITerminal 
+          projectId={activeSolution || 'default'}
+          onCodeInsert={handleCodeInsertFromAI}
+        />
+      }
     />
   )
 }

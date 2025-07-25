@@ -1,0 +1,102 @@
+@use 'sass:color';
+@use '@/styles/abstracts/variables' as vars;
+@use '@/styles/abstracts/mixins' as mixins;
+
+.messageBubble {
+  font-size: vars.$font-size-base;
+  line-height: vars.$line-height-relaxed;
+  color: vars.$color-text-primary;
+  word-wrap: break-word;
+
+  &--user {
+    // User messages have a slightly different tone
+  }
+
+  &--assistant {
+    // Assistant messages are the default
+  }
+
+  &--system {
+    font-style: italic;
+    color: vars.$color-text-secondary;
+  }
+
+  strong {
+    font-weight: vars.$font-weight-semibold;
+    color: vars.$color-text-primary;
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  &__code {
+    display: inline-block;
+    padding: 2px 6px;
+    background-color: color.scale(vars.$color-text-primary, $alpha: -95%);
+    border-radius: vars.$radius-sm;
+    font-family: vars.$font-family-mono;
+    font-size: 0.9em;
+    color: vars.$color-primary;
+  }
+
+  &__inlineCode {
+    display: block;
+    margin: vars.$spacing-3 0;
+    padding: vars.$spacing-3;
+    background-color: vars.$color-editor-bg;
+    border: 1px solid vars.$color-border;
+    border-radius: vars.$radius-md;
+    overflow-x: auto;
+
+    code {
+      font-family: vars.$font-family-mono;
+      font-size: vars.$font-size-sm;
+      color: vars.$color-text-primary;
+      line-height: vars.$line-height-relaxed;
+    }
+
+    // Custom scrollbar
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: vars.$color-background;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: color.scale(vars.$color-text-secondary, $alpha: -70%);
+      border-radius: vars.$radius-full;
+    }
+  }
+
+  // Lists
+  ul, ol {
+    margin: vars.$spacing-2 0;
+    padding-left: vars.$spacing-4;
+  }
+
+  li {
+    margin-bottom: vars.$spacing-1;
+  }
+
+  // Links (if we add them later)
+  a {
+    color: vars.$color-primary;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  // Blockquotes (if we add them later)
+  blockquote {
+    margin: vars.$spacing-3 0;
+    padding-left: vars.$spacing-3;
+    border-left: 3px solid vars.$color-primary;
+    color: vars.$color-text-secondary;
+    font-style: italic;
+  }
+}

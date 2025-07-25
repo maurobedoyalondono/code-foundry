@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
+import { claudeCodeClient } from '@/services/ClaudeCodeClientService'
 
 export interface AIMessage {
   id: string
@@ -64,15 +65,7 @@ export const useAIStore = create<AIStore>()(
 
       initializeAI: async () => {
         try {
-          // Initialize Claude Code SDK
-          // For now, simulate initialization
-          await new Promise(resolve => {
-            if (typeof globalThis.setTimeout !== 'undefined') {
-              globalThis.setTimeout(resolve, 1000)
-            } else {
-              resolve(undefined)
-            }
-          })
+          // Claude Code client is ready immediately
           set({ claudeCodeReady: true })
         } catch (error) {
           set({ 
@@ -149,25 +142,107 @@ export const useAIStore = create<AIStore>()(
         })
 
         try {
-          // Simulate AI response
-          await new Promise(resolve => {
-            if (typeof globalThis.setTimeout !== 'undefined') {
-              globalThis.setTimeout(resolve, 1500)
-            } else {
-              resolve(undefined)
-            }
-          })
+          // Prepare context for Claude Code API
+          const context = {
+            projectPath: '/home/negrito/src/projects/code-foundry',
+            projectType: session.mode === 'debug' ? 'rockwell' : 'generic',
+            currentFile: session.context.currentFile,
+            selectedCode: session.context.selectedCode
+          }
+          
+          // Handle different modes
+          let response
+          if (session.mode === 'feature') {
+            response = await claudeCodeClient.createFeature(message, context, (chunk) => {
+              // Update streaming message in real-time
+              set(state => {
+                const newSessions = new Map(state.sessions)
+                const currentSession = newSessions.get(sessionId)!
+                const messages = [...currentSession.messages]
+                
+                // Find or create streaming assistant message
+                let streamingMessage = messages.find(m => m.id.includes('streaming'))
+                if (!streamingMessage) {
+                  streamingMessage = {
+                    id: `msg-streaming-${Date.now()}`,
+                    role: 'assistant',
+                    content: '',
+                    timestamp: new Date()
+                  }
+                  messages.push(streamingMessage)
+                }
+                
+                streamingMessage.content = chunk
+                currentSession.messages = messages
+                newSessions.set(sessionId, currentSession)
+                return { sessions: newSessions }
+              })
+            })
+          } else if (session.mode === 'debug') {
+            response = await claudeCodeClient.debugCode(
+              session.context.selectedCode || '',
+              message,
+              'st',
+              context,
+              (chunk) => {
+                set(state => {
+                  const newSessions = new Map(state.sessions)
+                  const currentSession = newSessions.get(sessionId)!
+                  const messages = [...currentSession.messages]
+                  
+                  let streamingMessage = messages.find(m => m.id.includes('streaming'))
+                  if (!streamingMessage) {
+                    streamingMessage = {
+                      id: `msg-streaming-${Date.now()}`,
+                      role: 'assistant',
+                      content: '',
+                      timestamp: new Date()
+                    }
+                    messages.push(streamingMessage)
+                  }
+                  
+                  streamingMessage.content = chunk
+                  currentSession.messages = messages
+                  newSessions.set(sessionId, currentSession)
+                  return { sessions: newSessions }
+                })
+              }
+            )
+          } else {
+            // Regular conversation or command
+            response = await claudeCodeClient.executeCommand(message, context, (chunk) => {
+              set(state => {
+                const newSessions = new Map(state.sessions)
+                const currentSession = newSessions.get(sessionId)!
+                const messages = [...currentSession.messages]
+                
+                let streamingMessage = messages.find(m => m.id.includes('streaming'))
+                if (!streamingMessage) {
+                  streamingMessage = {
+                    id: `msg-streaming-${Date.now()}`,
+                    role: 'assistant',
+                    content: '',
+                    timestamp: new Date()
+                  }
+                  messages.push(streamingMessage)
+                }
+                
+                streamingMessage.content = chunk
+                currentSession.messages = messages
+                newSessions.set(sessionId, currentSession)
+                return { sessions: newSessions }
+              })
+            })
+          }
           
           const assistantMessage: AIMessage = {
             id: `msg-${Date.now()}`,
             role: 'assistant',
-            content: `I understand you want to ${message}. Let me help you with that.`,
+            content: response.finalMessage || 'No response received',
             timestamp: new Date(),
             metadata: {
-              codeBlocks: [{
-                language: 'st',
-                code: '// Generated code will appear here\nFUNCTION_BLOCK Example\nEND_FUNCTION_BLOCK'
-              }]
+              codeBlocks: response.codeBlocks,
+              suggestions: response.suggestions
             }
           }
 

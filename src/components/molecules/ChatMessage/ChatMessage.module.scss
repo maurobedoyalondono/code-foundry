@@ -1,0 +1,181 @@
+@use 'sass:color';
+@use '@/styles/abstracts/variables' as vars;
+@use '@/styles/abstracts/mixins' as mixins;
+
+.chatMessage {
+  @include mixins.flex(row, flex-start, flex-start);
+  gap: vars.$spacing-3;
+  margin-bottom: vars.$spacing-4;
+  animation: fadeIn vars.$transition-base;
+
+  &--user {
+    .chatMessage__content {
+      background-color: vars.$color-primary-bg;
+    }
+  }
+
+  &--assistant {
+    .chatMessage__content {
+      background-color: vars.$color-background-secondary;
+    }
+  }
+
+  &--system {
+    .chatMessage__content {
+      background-color: color.scale(vars.$color-warning, $alpha: -90%);
+      border: 1px solid color.scale(vars.$color-warning, $alpha: -70%);
+    }
+  }
+
+  &__avatar {
+    @include mixins.flex-center;
+    width: 32px;
+    height: 32px;
+    background-color: vars.$color-surface;
+    border-radius: vars.$radius-full;
+    font-size: vars.$font-size-base;
+    box-shadow: vars.$shadow-sm;
+    flex-shrink: 0;
+  }
+
+  &__content {
+    flex: 1;
+    padding: vars.$spacing-3;
+    border-radius: vars.$radius-md;
+    min-width: 0;
+  }
+
+  &__header {
+    @include mixins.flex(row, space-between, center);
+    margin-bottom: vars.$spacing-2;
+  }
+
+  &__role {
+    font-size: vars.$font-size-sm;
+    font-weight: vars.$font-weight-medium;
+    color: vars.$color-text-primary;
+  }
+
+  &__time {
+    font-size: vars.$font-size-xs;
+    color: vars.$color-text-tertiary;
+  }
+
+  &__codeBlocks {
+    margin-top: vars.$spacing-3;
+  }
+
+  &__codeBlock {
+    margin-bottom: vars.$spacing-3;
+    border-radius: vars.$radius-md;
+    overflow: hidden;
+    box-shadow: vars.$shadow-xs;
+    background-color: vars.$color-surface;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__codeHeader {
+    @include mixins.flex(row, space-between, center);
+    padding: vars.$spacing-2 vars.$spacing-3;
+    background-color: vars.$color-background;
+    border-bottom: 1px solid vars.$color-border;
+  }
+
+  &__codeLanguage {
+    font-size: vars.$font-size-xs;
+    font-weight: vars.$font-weight-semibold;
+    color: vars.$color-primary;
+    text-transform: uppercase;
+  }
+
+  &__codeActions {
+    @include mixins.flex(row);
+    gap: vars.$spacing-2;
+  }
+
+  &__codeButton {
+    @include mixins.button-base;
+    padding: vars.$spacing-1;
+    background-color: transparent;
+    border: none;
+    font-size: vars.$font-size-sm;
+    opacity: 0.7;
+    transition: opacity vars.$transition-base;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &__code {
+    margin: 0;
+    padding: vars.$spacing-3;
+    background-color: vars.$color-editor-bg;
+    overflow-x: auto;
+    
+    code {
+      font-family: vars.$font-family-mono;
+      font-size: vars.$font-size-sm;
+      color: vars.$color-text-primary;
+      line-height: vars.$line-height-relaxed;
+    }
+
+    // Custom scrollbar
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: vars.$color-background;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: color.scale(vars.$color-text-secondary, $alpha: -70%);
+      border-radius: vars.$radius-full;
+    }
+  }
+
+  &__suggestions {
+    margin-top: vars.$spacing-3;
+    padding: vars.$spacing-3;
+    background-color: color.scale(vars.$color-info, $alpha: -90%);
+    border-radius: vars.$radius-md;
+    border: 1px solid color.scale(vars.$color-info, $alpha: -70%);
+  }
+
+  &__suggestionsTitle {
+    margin: 0 0 vars.$spacing-2;
+    font-size: vars.$font-size-sm;
+    font-weight: vars.$font-weight-semibold;
+    color: vars.$color-info;
+  }
+
+  &__suggestionsList {
+    margin: 0;
+    padding-left: vars.$spacing-4;
+    
+    li {
+      font-size: vars.$font-size-sm;
+      color: vars.$color-text-primary;
+      line-height: vars.$line-height-relaxed;
+      
+      &:not(:last-child) {
+        margin-bottom: vars.$spacing-1;
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
