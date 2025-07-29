@@ -38,3 +38,5 @@ next-env.d.ts
 # workspace files
 /workspace/
 .code-foundry/
+
+.env
