@@ -158,7 +158,7 @@ export default function HomePage() {
               Diagram View
             </button>
           </div>
-          <div style={{ flex: 1, overflow: 'hidden' }}>
+          <div style={{ flex: 1, overflow: 'hidden', width: '100%', display: 'flex' }}>
             {viewMode === 'code' ? (
               <CodeEditor />
             ) : (

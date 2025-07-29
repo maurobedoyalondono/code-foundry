@@ -4,11 +4,13 @@
 
 .codeEditor {
   @include mixins.flex(column);
+  width: 100%;
   height: 100%;
   background-color: vars.$color-surface;
   border-radius: vars.$radius-lg;
   overflow: hidden;
   box-shadow: vars.$shadow-sm;
+  min-width: 0; // Allow flex item to shrink below content size
 
   &__tabs {
     @include mixins.flex(row);
