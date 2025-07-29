@@ -189,8 +189,8 @@
   }
 }
 
-// Responsive styles
-@include respond-to('md') {
+// Responsive styles - hide sidebar on MOBILE (below md breakpoint)
+@media (max-width: #{$breakpoint-md - 1px}) {
   .ideLayout {
     &__sidebar {
       position: fixed;
