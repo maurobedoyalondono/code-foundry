@@ -3,7 +3,7 @@ import Anthropic from '@anthropic-ai/sdk'
 
 export async function GET() {
   try {
-    const apiKey = process.env.ANTHROPIC_API_KEY
+    const apiKey = globalThis.process?.env?.ANTHROPIC_API_KEY
     
     if (!apiKey) {
       return NextResponse.json({
@@ -39,9 +39,9 @@ export async function GET() {
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
-      apiKeyPresent: !!process.env.ANTHROPIC_API_KEY,
-      apiKeyLength: process.env.ANTHROPIC_API_KEY?.length || 0,
-      apiKeyPrefix: process.env.ANTHROPIC_API_KEY?.substring(0, 15) + '...' || 'N/A'
+      apiKeyPresent: !!globalThis.process?.env?.ANTHROPIC_API_KEY,
+      apiKeyLength: globalThis.process?.env?.ANTHROPIC_API_KEY?.length || 0,
+      apiKeyPrefix: globalThis.process?.env?.ANTHROPIC_API_KEY?.substring(0, 15) + '...' || 'N/A'
     })
   }
 }

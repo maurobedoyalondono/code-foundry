@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { claudeCodeClient } from '@/services/ClaudeCodeClientService'
+import { featureWorkflowService } from '@/services/FeatureWorkflowService'
 
 export interface AIMessage {
   id: string
@@ -26,6 +27,13 @@ export interface AISession {
     activeRoutines?: string[]
   }
   mode: 'conversation' | 'feature' | 'debug'
+  featureWorkflow?: {
+    state: 'collecting-answers' | 'generating-specs' | 'ready-to-implement'
+    questions?: string[]
+    currentQuestionIndex?: number
+    answers?: string[]
+    specPath?: string
+  }
   createdAt: Date
   updatedAt: Date
 }
@@ -152,8 +160,173 @@ export const useAIStore = create<AIStore>()(
           
           // Handle different modes
           let response
+          let assistantContent = ''
+          
           if (session.mode === 'feature') {
-            response = await claudeCodeClient.createFeature(message, context)
+            // Handle feature workflow
+            if (!session.featureWorkflow) {
+              // Start new feature workflow
+              const workflowResult = await featureWorkflowService.startFeatureWorkflow(sessionId, message)
+              
+              // Update session with workflow state
+              set(state => {
+                const newSessions = new Map(state.sessions)
+                const currentSession = newSessions.get(sessionId)!
+                currentSession.featureWorkflow = {
+                  state: 'collecting-answers',
+                  questions: workflowResult.questions,
+                  currentQuestionIndex: 0,
+                  answers: []
+                }
+                newSessions.set(sessionId, currentSession)
+                return { sessions: newSessions }
+              })
+              
+              assistantContent = `I'll help you create a complete feature specification. Let me ask you some questions to better understand your requirements:\n\n${workflowResult.questions.join('\n\n')}\n\nPlease answer these questions one by one, or all at once separated by "---".`
+              response = { finalMessage: assistantContent }
+              
+            } else if (session.featureWorkflow.state === 'collecting-answers') {
+              // Process answers
+              const answers = message.includes('---') 
+                ? message.split('---').map(a => a.trim())
+                : [message]
+              
+              const currentAnswers = session.featureWorkflow.answers || []
+              const updatedAnswers = [...currentAnswers, ...answers]
+              
+              // Check if all questions are answered
+              if (updatedAnswers.length >= (session.featureWorkflow.questions?.length || 0)) {
+                // All questions answered, process them
+                const result = await featureWorkflowService.processAnswers(sessionId, updatedAnswers)
+                
+                // Update workflow state
+                set(state => {
+                  const newSessions = new Map(state.sessions)
+                  const currentSession = newSessions.get(sessionId)!
+                  currentSession.featureWorkflow = {
+                    ...currentSession.featureWorkflow!,
+                    state: 'generating-specs',
+                    answers: updatedAnswers
+                  }
+                  newSessions.set(sessionId, currentSession)
+                  return { sessions: newSessions }
+                })
+                
+                assistantContent = `Great! Based on your answers, I've clarified the feature idea:\n\n${result.clarifiedIdea}\n\nNow I'll generate the complete specification documents...\n\n📝 Generating user stories...`
+                response = { finalMessage: assistantContent }
+                
+                // Generate specs in background
+                if (typeof globalThis.setTimeout !== 'undefined') {
+                  globalThis.setTimeout(async () => {
+                  try {
+                    // Generate user stories
+                    await featureWorkflowService.generateUserStories(sessionId)
+                    
+                    // Add progress message
+                    const progressMsg1: AIMessage = {
+                      id: `msg-${Date.now()}-1`,
+                      role: 'assistant',
+                      content: '✅ User stories generated!\n📐 Creating technical design...',
+                      timestamp: new Date()
+                    }
+                    
+                    set(state => {
+                      const newSessions = new Map(state.sessions)
+                      const currentSession = newSessions.get(sessionId)!
+                      currentSession.messages = [...currentSession.messages, progressMsg1]
+                      newSessions.set(sessionId, currentSession)
+                      return { sessions: newSessions }
+                    })
+                    
+                    // Generate design
+                    await featureWorkflowService.generateDesign(sessionId)
+                    
+                    // Add progress message
+                    const progressMsg2: AIMessage = {
+                      id: `msg-${Date.now()}-2`,
+                      role: 'assistant',
+                      content: '✅ Technical design created!\n📋 Generating implementation plan...',
+                      timestamp: new Date()
+                    }
+                    
+                    set(state => {
+                      const newSessions = new Map(state.sessions)
+                      const currentSession = newSessions.get(sessionId)!
+                      currentSession.messages = [...currentSession.messages, progressMsg2]
+                      newSessions.set(sessionId, currentSession)
+                      return { sessions: newSessions }
+                    })
+                    
+                    // Generate plan
+                    await featureWorkflowService.generatePlan(sessionId)
+                    const workflowState = featureWorkflowService.getWorkflowState(sessionId)
+                    
+                    // Final message
+                    const finalMsg: AIMessage = {
+                      id: `msg-${Date.now()}-3`,
+                      role: 'assistant',
+                      content: `✅ Feature specification complete!\n\n📁 All specification documents have been created in:\n${workflowState?.folderPath}\n\nGenerated files:\n- idea.md (Feature description)\n- user-stories.md (User requirements)\n- design.md (Technical design)\n- plan.md (Implementation plan)\n\nYou can now review these documents and start implementation. Switch back to Chat mode if you need help with the implementation!`,
+                      timestamp: new Date()
+                    }
+                    
+                    set(state => {
+                      const newSessions = new Map(state.sessions)
+                      const currentSession = newSessions.get(sessionId)!
+                      currentSession.messages = [...currentSession.messages, finalMsg]
+                      currentSession.featureWorkflow = {
+                        ...currentSession.featureWorkflow!,
+                        state: 'ready-to-implement',
+                        specPath: workflowState?.folderPath
+                      }
+                      newSessions.set(sessionId, currentSession)
+                      return { sessions: newSessions }
+                    })
+                    
+                  } catch (error) {
+                    const errorMsg: AIMessage = {
+                      id: `msg-${Date.now()}-error`,
+                      role: 'assistant',
+                      content: `❌ Error generating specifications: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                      timestamp: new Date()
+                    }
+                    
+                    set(state => {
+                      const newSessions = new Map(state.sessions)
+                      const currentSession = newSessions.get(sessionId)!
+                      currentSession.messages = [...currentSession.messages, errorMsg]
+                      newSessions.set(sessionId, currentSession)
+                      return { sessions: newSessions }
+                    })
+                  }
+                  }, 100)
+                }
+                
+              } else {
+                // More questions to answer
+                set(state => {
+                  const newSessions = new Map(state.sessions)
+                  const currentSession = newSessions.get(sessionId)!
+                  currentSession.featureWorkflow = {
+                    ...currentSession.featureWorkflow!,
+                    answers: updatedAnswers,
+                    currentQuestionIndex: updatedAnswers.length
+                  }
+                  newSessions.set(sessionId, currentSession)
+                  return { sessions: newSessions }
+                })
+                
+                const remainingQuestions = session.featureWorkflow.questions?.slice(updatedAnswers.length) || []
+                assistantContent = remainingQuestions.length > 0
+                  ? `Thank you! Here are the remaining questions:\n\n${remainingQuestions.join('\n\n')}`
+                  : 'Processing your answers...'
+                response = { finalMessage: assistantContent }
+              }
+              
+            } else {
+              // Feature workflow completed or in other state
+              assistantContent = 'The feature specification has been generated. You can find the documents in the specs folder. Switch to Chat mode if you need help with implementation!'
+              response = { finalMessage: assistantContent }
+            }
           } else if (session.mode === 'debug') {
             response = await claudeCodeClient.debugCode(
               session.context.selectedCode || '',
@@ -214,6 +387,10 @@ export const useAIStore = create<AIStore>()(
           if (session) {
             session.mode = mode
             session.updatedAt = new Date()
+            // Reset feature workflow when switching modes
+            if (mode !== 'feature') {
+              delete session.featureWorkflow
+            }
             newSessions.set(sessionId, session)
           }
           return { sessions: newSessions }
