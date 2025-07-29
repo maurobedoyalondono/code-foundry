@@ -126,32 +126,33 @@ function processResponse(messages: SDKMessage[]): ClaudeCodeResponse {
 
   // Process all messages
   for (const message of messages) {
-    // Handle different message types from Claude Code SDK
-    if (message.type === 'assistant' && 'text' in message && message.text) {
-      finalMessage += message.text + '\n'
-    } else if (message.type === 'user' && 'text' in message && message.text) {
-      // Skip user messages in final output
-    } else if (message.type === 'result' && 'text' in message && message.text) {
-      finalMessage += message.text + '\n'
-    }
-    
-    // Extract code blocks from any message that has text
-    const messageText = ('text' in message && typeof message.text === 'string') ? message.text : ''
-    if (messageText) {
-      const codeMatches = messageText.match(/```(\w+)?\n([\s\S]*?)```/g)
-      if (codeMatches) {
-        for (const match of codeMatches) {
-          const [, language = 'text', code] = match.match(/```(\w+)?\n([\s\S]*?)```/) || []
-          if (code) {
-            codeBlocks.push({ language, code: code.trim() })
+    // Look for assistant messages with content
+    if (message.type === 'assistant' && 'message' in message && message.message) {
+      const assistantMsg = message.message as any
+      if (assistantMsg.content && Array.isArray(assistantMsg.content)) {
+        // Process content array
+        for (const content of assistantMsg.content) {
+          if (content.type === 'text' && content.text) {
+            finalMessage += content.text + '\n'
+            
+            // Extract code blocks
+            const codeMatches = content.text.match(/```(\w+)?\n([\s\S]*?)```/g)
+            if (codeMatches) {
+              for (const match of codeMatches) {
+                const [, language = 'text', code] = match.match(/```(\w+)?\n([\s\S]*?)```/) || []
+                if (code) {
+                  codeBlocks.push({ language, code: code.trim() })
+                }
+              }
+            }
+            
+            // Extract suggestions
+            const suggestionMatches = content.text.match(/(?:suggestion|recommend)[s]?:?\s*([^\n]+)/gi)
+            if (suggestionMatches) {
+              suggestions.push(...suggestionMatches.map(s => s.replace(/(?:suggestion|recommend)[s]?:?\s*/i, '')))
+            }
           }
         }
-      }
-      
-      // Extract suggestions
-      const suggestionMatches = messageText.match(/(?:suggestion|recommend)[s]?:?\s*([^\n]+)/gi)
-      if (suggestionMatches) {
-        suggestions.push(...suggestionMatches.map(s => s.replace(/(?:suggestion|recommend)[s]?:?\s*/i, '')))
       }
     }
   }

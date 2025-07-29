@@ -25,6 +25,8 @@ export const IDELayout: React.FC<IDELayoutProps> = ({
 }) => {
   const [leftPanelCollapsed, setLeftPanelCollapsed] = React.useState(false)
   const [bottomPanelCollapsed, setBottomPanelCollapsed] = React.useState(false)
+  const [bottomPanelHeight, setBottomPanelHeight] = React.useState(300)
+  const [isResizing, setIsResizing] = React.useState(false)
 
   const toggleLeftPanel = () => {
     setLeftPanelCollapsed(!leftPanelCollapsed)
@@ -33,6 +35,39 @@ export const IDELayout: React.FC<IDELayoutProps> = ({
   const toggleBottomPanel = () => {
     setBottomPanelCollapsed(!bottomPanelCollapsed)
   }
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault()
+    setIsResizing(true)
+  }
+
+  React.useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return
+      
+      const newHeight = window.innerHeight - e.clientY - 100 // 100px for header/footer
+      const minHeight = 150
+      const maxHeight = window.innerHeight * 0.8
+      
+      setBottomPanelHeight(Math.max(minHeight, Math.min(maxHeight, newHeight)))
+    }
+
+    const handleMouseUp = () => {
+      setIsResizing(false)
+    }
+
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
+      document.body.style.cursor = 'ns-resize'
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+      document.body.style.cursor = 'auto'
+    }
+  }, [isResizing])
 
   return (
     <div className={styles.ideLayout}>
@@ -73,7 +108,9 @@ export const IDELayout: React.FC<IDELayoutProps> = ({
         </aside>
 
         <main className={styles.ideLayout__main}>
-          <div className={styles.ideLayout__editorArea}>
+          <div className={styles.ideLayout__editorArea} style={{
+            height: bottomPanelCollapsed ? '100%' : `calc(100% - ${bottomPanelHeight}px)`
+          }}>
             {rightPanelUpper}
           </div>
           
@@ -81,8 +118,15 @@ export const IDELayout: React.FC<IDELayoutProps> = ({
             className={`${styles.ideLayout__terminal} ${
               bottomPanelCollapsed ? styles['ideLayout__terminal--collapsed'] : ''
             }`}
+            style={{
+              height: bottomPanelCollapsed ? '40px' : `${bottomPanelHeight}px`
+            }}
           >
-            <div className={styles.ideLayout__terminalHeader}>
+            <div 
+              className={styles.ideLayout__terminalHeader}
+              onMouseDown={handleMouseDown}
+              style={{ cursor: 'ns-resize' }}
+            >
               <div className={styles.ideLayout__terminalTabs}>
                 <div className={styles.ideLayout__terminalTab}>
                   AI Terminal
