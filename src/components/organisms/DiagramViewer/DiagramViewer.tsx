@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import ReactFlow, {
   Node,
   Edge,
@@ -31,6 +31,7 @@ interface DiagramViewerProps {
   readOnly?: boolean
 }
 
+// Define nodeTypes outside the component to prevent recreation
 const nodeTypes = {
   functionBlock: FunctionBlockNode,
   coil: CoilNode,
@@ -75,8 +76,6 @@ export const DiagramViewer: React.FC<DiagramViewerProps> = ({
 
   const defaultViewport = { x: 0, y: 0, zoom: 1 }
 
-  const proOptions = { hideAttribution: true }
-
   return (
     <div className={`${styles.diagramViewer} ${className}`}>
       <ReactFlowProvider>
@@ -91,7 +90,6 @@ export const DiagramViewer: React.FC<DiagramViewerProps> = ({
           connectionLineType={ConnectionLineType.SmoothStep}
           defaultViewport={defaultViewport}
           fitView
-          proOptions={proOptions}
         >
           <Background color="#e2e8f0" gap={16} />
           <Controls />

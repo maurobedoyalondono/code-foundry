@@ -23,7 +23,7 @@ export default function HomePage() {
     createSolution,
   } = useSolutionStore()
 
-  const { openTab } = useEditorStore()
+  const { openTab, openTabs, activeTabId } = useEditorStore()
   const { initializeAI } = useAIStore()
 
   // Load solutions on mount
@@ -31,6 +31,17 @@ export default function HomePage() {
     loadSolutions()
     initializeAI()
   }, [loadSolutions, initializeAI])
+
+  // Regenerate diagram when active tab changes in diagram view
+  useEffect(() => {
+    if (viewMode === 'diagram') {
+      const activeTab = openTabs.find(tab => tab.id === activeTabId)
+      if (activeTab && activeTab.language === 'st') {
+        const diagram = diagramGenerationService.generateDiagramFromST(activeTab.content)
+        setCurrentDiagram(diagram)
+      }
+    }
+  }, [activeTabId, openTabs, viewMode])
 
   const handleFileSelect = (file: FileNode) => {
     if (file.type === 'file') {
