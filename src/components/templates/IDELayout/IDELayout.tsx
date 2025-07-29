@@ -42,12 +42,12 @@ export const IDELayout: React.FC<IDELayoutProps> = ({
   }
 
   React.useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMouseMove = (e: globalThis.MouseEvent) => {
       if (!isResizing) return
       
-      const newHeight = window.innerHeight - e.clientY - 100 // 100px for header/footer
+      const newHeight = globalThis.window.innerHeight - e.clientY - 100 // 100px for header/footer
       const minHeight = 150
-      const maxHeight = window.innerHeight * 0.8
+      const maxHeight = globalThis.window.innerHeight * 0.8
       
       setBottomPanelHeight(Math.max(minHeight, Math.min(maxHeight, newHeight)))
     }
@@ -57,15 +57,15 @@ export const IDELayout: React.FC<IDELayoutProps> = ({
     }
 
     if (isResizing) {
-      document.addEventListener('mousemove', handleMouseMove)
-      document.addEventListener('mouseup', handleMouseUp)
-      document.body.style.cursor = 'ns-resize'
+      globalThis.document.addEventListener('mousemove', handleMouseMove)
+      globalThis.document.addEventListener('mouseup', handleMouseUp)
+      globalThis.document.body.style.cursor = 'ns-resize'
     }
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
-      document.body.style.cursor = 'auto'
+      globalThis.document.removeEventListener('mousemove', handleMouseMove)
+      globalThis.document.removeEventListener('mouseup', handleMouseUp)
+      globalThis.document.body.style.cursor = 'auto'
     }
   }, [isResizing])
 

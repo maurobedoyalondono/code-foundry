@@ -144,7 +144,7 @@ export const useAIStore = create<AIStore>()(
         try {
           // Prepare context for Claude Code API
           const context = {
-            projectPath: '/home/negrito/src/projects/code-foundry',
+            projectPath: '/home/negrito/src/projects/code-foundry/workspace',
             projectType: session.mode === 'debug' ? 'rockwell' : 'generic',
             currentFile: session.context.currentFile,
             selectedCode: session.context.selectedCode
@@ -153,86 +153,17 @@ export const useAIStore = create<AIStore>()(
           // Handle different modes
           let response
           if (session.mode === 'feature') {
-            response = await claudeCodeClient.createFeature(message, context, (chunk) => {
-              // Update streaming message in real-time
-              set(state => {
-                const newSessions = new Map(state.sessions)
-                const currentSession = newSessions.get(sessionId)!
-                const messages = [...currentSession.messages]
-                
-                // Find or create streaming assistant message
-                let streamingMessage = messages.find(m => m.id.includes('streaming'))
-                if (!streamingMessage) {
-                  streamingMessage = {
-                    id: `msg-streaming-${Date.now()}`,
-                    role: 'assistant',
-                    content: '',
-                    timestamp: new Date()
-                  }
-                  messages.push(streamingMessage)
-                }
-                
-                streamingMessage.content = chunk
-                currentSession.messages = messages
-                newSessions.set(sessionId, currentSession)
-                return { sessions: newSessions }
-              })
-            })
+            response = await claudeCodeClient.createFeature(message, context)
           } else if (session.mode === 'debug') {
             response = await claudeCodeClient.debugCode(
               session.context.selectedCode || '',
               message,
               'st',
-              context,
-              (chunk) => {
-                set(state => {
-                  const newSessions = new Map(state.sessions)
-                  const currentSession = newSessions.get(sessionId)!
-                  const messages = [...currentSession.messages]
-                  
-                  let streamingMessage = messages.find(m => m.id.includes('streaming'))
-                  if (!streamingMessage) {
-                    streamingMessage = {
-                      id: `msg-streaming-${Date.now()}`,
-                      role: 'assistant',
-                      content: '',
-                      timestamp: new Date()
-                    }
-                    messages.push(streamingMessage)
-                  }
-                  
-                  streamingMessage.content = chunk
-                  currentSession.messages = messages
-                  newSessions.set(sessionId, currentSession)
-                  return { sessions: newSessions }
-                })
-              }
+              context
             )
           } else {
             // Regular conversation or command
-            response = await claudeCodeClient.executeCommand(message, context, (chunk) => {
-              set(state => {
-                const newSessions = new Map(state.sessions)
-                const currentSession = newSessions.get(sessionId)!
-                const messages = [...currentSession.messages]
-                
-                let streamingMessage = messages.find(m => m.id.includes('streaming'))
-                if (!streamingMessage) {
-                  streamingMessage = {
-                    id: `msg-streaming-${Date.now()}`,
-                    role: 'assistant',
-                    content: '',
-                    timestamp: new Date()
-                  }
-                  messages.push(streamingMessage)
-                }
-                
-                streamingMessage.content = chunk
-                currentSession.messages = messages
-                newSessions.set(sessionId, currentSession)
-                return { sessions: newSessions }
-              })
-            })
+            response = await claudeCodeClient.executeCommand(message, context)
           }
           
           const assistantMessage: AIMessage = {
